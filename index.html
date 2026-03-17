@@ -1,1 +1,960 @@
-test
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Swift-Instruct-Voice Demo</title>
+  <style>
+    :root {
+      --bg: #f3f5f7;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #5b6472;
+      --line: #d9dee5;
+      --accent: #2d6cdf;
+      --accent-soft: #eaf1ff;
+      --shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .page {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 30px;
+      margin: 24px 0;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 40px 32px;
+    }
+
+    .hero h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 3.6vw, 2.9rem);
+      line-height: 1.2;
+    }
+
+    .subline {
+      color: var(--muted);
+      font-size: 1.35rem;
+      font-weight: 500;
+      margin-bottom: 22px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 18px;
+      font-size: 0.95rem;
+    }
+
+    .hero-links {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .nav-menu {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      max-width: 1040px;
+      position: relative;
+    }
+
+    .nav-item {
+      position: relative;
+    }
+
+    .hero-links a,
+    .nav-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      font-weight: 700;
+      font-size: 1rem;
+      min-height: 46px;
+      text-align: center;
+      transition: all 0.2s ease;
+      color: var(--accent);
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .hero-links a:hover,
+    .nav-button:hover {
+      text-decoration: none;
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .hero-links a.repo-link {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .hero-links a.repo-link:hover {
+      background: #245bc0;
+      color: white;
+    }
+
+    .nav-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 240px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+      box-shadow: var(--shadow);
+      z-index: 20;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nav-item.open .nav-dropdown {
+      display: flex;
+    }
+
+    .nav-dropdown a {
+      width: 100%;
+      min-height: 42px;
+      border-radius: 12px;
+      justify-content: center;
+    }
+
+    .nav-caret {
+      margin-left: 8px;
+      font-size: 0.9rem;
+      line-height: 1;
+    }
+
+    .nav-button {
+      flex-direction: column;
+      line-height: 1.15;
+      gap: 2px;
+      position: relative;
+      padding-right: 28px;
+    }
+
+    .nav-button-label {
+      display: block;
+    }
+
+    .nav-button-sub {
+      display: block;
+      font-size: 1em;
+      font-weight: 700;
+    }
+
+    .nav-item.has-dropdown .nav-caret {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      margin-left: 0;
+    }
+
+    h2 {
+      font-size: 1.7rem;
+      margin: 0 0 18px;
+      text-align: center;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      margin: 24px 0 12px;
+    }
+
+    p {
+      margin: 12px 0;
+    }
+
+    .section-note {
+      color: var(--muted);
+      text-align: left;
+      max-width: 920px;
+      margin: 0 auto 12px;
+    }
+
+    .justified-note {
+      text-align: left;
+      max-width: 920px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .release-note {
+      max-width: 920px;
+      margin: 10px auto 0;
+      padding: 8px 0;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.93rem;
+      background: transparent;
+      border: none;
+    }
+
+    .highlights {
+      display: grid;
+      grid-template-columns: 1.1fr 1.3fr;
+      gap: 16px;
+      margin-top: 18px;
+      align-items: stretch;
+    }
+
+    .highlight-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+      background: #fcfdff;
+    }
+
+    .highlight-title {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .highlight-list {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    .highlight-list li {
+      margin: 8px 0;
+    }
+
+    .dataset-layout {
+      margin-top: 18px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+      background: white;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 12px 10px;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 0.96rem;
+    }
+
+    th {
+      background: #f8fafc;
+      font-weight: 700;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .sample-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 18px;
+    }
+
+    .sample-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      background: #fcfdff;
+    }
+
+    .sample-meta {
+      color: var(--muted);
+      font-size: 0.94rem;
+      margin-bottom: 10px;
+    }
+
+    audio {
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .audio-cell audio {
+      min-width: 170px;
+      width: 100%;
+    }
+
+    .cell-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mini-details {
+      width: 100%;
+      max-width: 170px;
+      margin-top: 0;
+      padding: 6px 8px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      text-align: left;
+    }
+
+    .mini-details summary {
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    .mini-details p {
+      margin: 8px 0 0;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    details {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: white;
+      padding: 10px 12px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .instruction-list {
+      margin: 10px 0 0;
+      padding-left: 18px;
+    }
+
+    .instruction-list li {
+      margin: 6px 0;
+    }
+
+    
+    .caption {
+      color: var(--muted);
+      font-size: 0.93rem;
+      margin-top: 8px;
+    }
+
+    .failure-note {
+      background: #fff8ea;
+      border: 1px solid #f1d49a;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 28px;
+    }
+
+    @media (max-width: 980px) {
+      .dataset-layout,
+      .sample-grid,
+      .highlights {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 22px;
+      }
+
+      .nav-menu {
+        gap: 10px;
+      }
+
+      .nav-dropdown {
+        position: static;
+        transform: none;
+        margin-top: 8px;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <section class="card hero">
+<h1>Swift-Instruct-Voice: Fast and Flexible Instruction-Guided Bilingual Speech Synthesis</h1>
+      <div class="subline">Anonymous submission to Interspeech 2026</div>
+<div class="hero-links">
+        <div class="nav-menu">
+          <div class="nav-item">
+            <a class="repo-link" href="https://github.com/2026tts/Real-Time-Instructed-TTS" target="_blank" rel="noopener noreferrer">Project Repository</a>
+          </div>
+          <div class="nav-item">
+            <a href="#abstract">Abstract</a>
+          </div>
+          <div class="nav-item has-dropdown">
+            <button class="nav-button" type="button"><span class="nav-button-label">Instruction-Voice</span><span class="nav-button-sub">(Our Dataset)</span><span class="nav-caret">▾</span></button>
+            <div class="nav-dropdown">
+              <a href="#dataset">Information</a>
+              <a href="#dataset-examples">Examples</a>
+            </div>
+          </div>
+          <div class="nav-item has-dropdown">
+            <button class="nav-button" type="button"><span class="nav-button-label">Instruction-Following</span><span class="nav-button-sub">Synthesis</span><span class="nav-caret">▾</span></button>
+            <div class="nav-dropdown">
+              <a href="#instruction-following">Speech Samples</a>
+              <a href="#cross-lingual-cases">Cross-Lingual Cases</a>
+              <a href="#robustness">Robustness</a>
+              <a href="#challenging-cases">Challenging Cases</a>
+            </div>
+          </div>
+          <div class="nav-item">
+            <a class="nav-button" href="#zero-shot"><span class="nav-button-label">Zero-Shot</span><span class="nav-button-sub">Synthesis</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="abstract">
+      <h2>Abstract</h2>
+      <p>
+        Instruction-guided text-to-speech provides a flexible way to specify desired speaking style with natural language. However, existing open-source instruction datasets often rely on limited template expressions, and many prior models adopt autoregressive decoding with relatively high inference cost. In this work, we build <strong>Instruction-Voice</strong>, a bilingual multi-form instruction dataset with generation and rewriting pipelines, and we introduce <strong>Swift-Instruct-Voice (SI-Voice)</strong>, an efficient non-autoregressive TTS model for low-latency instruction-guided speech synthesis. SI-Voice supports both strong instruction-following generation and competitive zero-shot bilingual synthesis.
+      </p>
+      <div class="highlights">
+        <div class="highlight-item">
+          <div class="highlight-title">Instruction-Voice Dataset</div>
+          Built with <strong>two pipelines</strong> across Chinese and English, with six instruction styles for each utterance: Natural, Expressive, and Label in both languages.
+        </div>
+        <div class="highlight-item">
+          <div class="highlight-title">SI-Voice</div>
+          <ul class="highlight-list">
+            <li>A bilingual speech synthesis model that supports both instruction-guided synthesis and zero-shot synthesis within one framework.</li>
+            <li>Real-time non-autoregressive synthesis with a compact architecture for efficient low-latency generation.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="dataset">
+      <h2>Instruction-Voice Dataset</h2>
+      <p class="section-note justified-note">
+        We build <strong>Instruction-Voice</strong>, a bilingual multi-form instruction dataset for instruction-guided TTS, covering around <strong>1.3k hours</strong> of speech with <strong>six stylistic instruction variants</strong> for each utterance in English and Chinese.
+      </p>
+      <div class="dataset-layout">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Subset</th>
+                <th>Lang.</th>
+                <th>Hours</th>
+                <th>Long Caption</th>
+                <th>Instructions<br>(6 forms)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>WenetSpeech4TTS (Premium)</td>
+                <td>ZH</td>
+                <td>945</td>
+                <td>✓</td>
+                <td>✓</td>
+              </tr>
+              <tr>
+                <td>ESD (Mandarin part)</td>
+                <td>ZH</td>
+                <td>15.7</td>
+                <td>✓</td>
+                <td>✓</td>
+              </tr>
+              <tr>
+                <td>EmotionTalk</td>
+                <td>ZH</td>
+                <td>23.6</td>
+                <td>✗</td>
+                <td>✓</td>
+              </tr>
+              <tr>
+                <td>TextrolSpeech</td>
+                <td>EN</td>
+                <td>330</td>
+                <td>✗</td>
+                <td>✓</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="caption justified-note">Instruction-Voice consists of four subsets. We apply instruction generation to WenetSpeech4TTS (Premium) and ESD (Mandarin part), and instruction rewriting to EmotionTalk and TextrolSpeech.</p>
+      <div class="release-note"><strong>Release Note.</strong> Partial release now available in our project repository; full release after the review process.</div>
+    </section>
+
+    <section class="card" id="dataset-examples">
+      <h2>Examples from Instruction-Voice</h2>
+      <p class="section-note">
+        Below we show one Chinese example and one English example from our Instruction-Voice dataset. Each sample includes the audio, transcription text, long caption, and six instruction variants.
+      </p>
+
+      <div class="sample-grid">
+        <div class="sample-card">
+          <h3>Chinese Example</h3>
+          <div class="sample-meta">Sample ID: esd_0001_000965</div>
+          <p><strong>Text:</strong> 这里填写中文目标文本。</p>
+          <audio controls>
+            <source src="samples/dataset/zh_example_001.wav" type="audio/wav" />
+          </audio>
+
+          <details>
+            <summary>Show long caption</summary>
+            <p>The audio clip begins with a faint, low-frequency mechanical click, likely from the activation of a recording device, followed by a brief period of low-level electronic hiss characteristic of consumer-grade microphones. A young adult female voice, positioned very close to the microphone, speaks clearly and deliberately in Standard Mandarin Chinese. Her tone is formal and respectful, marked by a slow, measured pace and a high, slightly breathy pitch. The speaker says, “我必须再次感谢您的慷慨相助” (“Wǒ bìxū zàicì gǎnxiè nín de kāngkǎi xiāngzhù”), which translates to “I must once again thank you for your generous assistance.” Each word is pronounced with careful articulation and a noticeable upward inflection on the final particle, “了,” conveying sincerity and gratitude. The delivery is free of emotional peaks or vocal strain, maintaining a polite and professional demeanor throughout. The acoustic environment is dry and intimate, with no ambient sounds, reverberation, or background noise, indicating a small, well-dampened room. The recording ends abruptly with a soft, low-frequency click, likely the device being stopped, after which there is a brief moment of silence.</p>
+ <p>In summary, this audio features a single, high-fidelity Mandarin statement of gratitude, delivered by a young woman in a formal and respectful manner. The recording is isolated, technically clean, and devoid of contextual or environmental cues, suggesting its purpose is for a professional or official communication. The message is clear, sincere, and culturally appropriate, reflecting a modern, educated speaker in a controlled setting.
+</p>
+          </details>
+
+          <details>
+            <summary>Show 6-style instructions</summary>
+            <ul class="instruction-list">
+              <li><strong>Natural-EN:</strong> Her voice is steady and formal, with a high, slightly breathy pitch and medium energy, conveying sincere gratitude.</li>
+              <li><strong>Natural-ZH:</strong> 她的语气平稳而正式，声调较高且略带气息，能量适中，表达着真挚的感激之情。</li>
+              <li><strong>Expressive-EN:</strong> A young woman's voice, clear and deliberate, rises slightly at the end with a high, breathy tone, delivering a formal and heartfelt expression of gratitude.</li>
+              <li><strong>Expressive-ZH:</strong> 一个年轻女子的声音清晰而正式，结尾处声调略带气息并上扬，传达出真诚的感激之情。</li>
+              <li><strong>Label-EN:</strong> formal, grateful, high pitch, breathy, medium energy</li>
+              <li><strong>Label-ZH:</strong> 正式、感激、高音、带气息、中等能量 </li>
+            </ul>
+          </details>
+        </div>
+
+        
+
+        <div class="sample-card">
+          <h3>English Example</h3>
+          <div class="sample-meta">Sample ID: esd_0018_000795</div>
+          <p><strong>Text:</strong> Fill in the English target text here.</p>
+          <audio controls>
+            <source src="samples/dataset/en_example_001.wav" type="audio/wav" />
+          </audio>
+
+
+          <details>
+            <summary>Show 6-style instructions</summary>
+            <ul class="instruction-list">
+              <li><strong>Natural-EN:</strong> A female treble conveys her elated message with a natural speaking speed.</li>
+              <li><strong>Natural-ZH:</strong> 一位女性用自然的语速传达了她兴奋的信息。</li>
+              <li><strong>Expressive-EN:</strong> Her joyous message flows out with a smooth and natural pace.</li>
+              <li><strong>Expressive-ZH:</strong> 她的话语充满喜悦，以一种自然流畅的语调表达出来。</li>
+              <li><strong>Label-EN:</strong> medium, happy, stable pitch, high-energy</li>
+              <li><strong>Label-ZH:</strong> 中速、高兴、稳定音调、高能量</li>
+            </ul>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="instruction-following">
+      <h2>Instruction-Following Synthesis</h2>
+      <p class="section-note">
+        We show representative instruction-following synthesis cases in English and Chinese, covering natural, expressive, and label-style prompts in a single comparison table.
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Target Text</th>
+              <th>Reference Utterance (Target Speaker)</th>
+              <th>Instruction</th>
+              <th>SI-Voice (Ours)</th>
+              <th>CosyVoice2</th>
+              <th>CosyVoice3</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>The end part is fish mouth.</td>
+              <td class="audio-cell"><audio controls><source src="samples/instruction_following/ref_1.wav" type="audio/wav" /></audio></td>
+              <td>With a gentle and high-pitched voice, she speaks at a steady pace..</td>
+              <td class="audio-cell"><audio controls><source src="samples/instruction_following/ours_1.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/instruction_following/cv2_1.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/instruction_following/cv3_1.wav" type="audio/wav" /></audio></td>
+            </tr>
+            <tr>
+              <td>Chew leaves quickly, said rabbit.</td>
+              <td class="audio-cell"><audio controls><source src="samples/instruction_following/ref_2.wav" type="audio/wav" /></audio></td>
+              <td>With his typically cheerful voice, the fellow speaks at a relaxed pace, exuding a hint of diminished excitement.</td>
+              <td class="audio-cell"><audio controls><source src="samples/instruction_following/ours_2.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/instruction_following/cv2_2.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/instruction_following/cv3_2.wav" type="audio/wav" /></audio></td>
+            </tr>
+
+            <tr>
+              <td>我必须再次感谢您的慷慨相助。</td>
+              <td class="audio-cell"><audio controls><source src="samples/instruction_following/ref_3.wav" type="audio/wav" /></audio></td>
+              <td>	她的语速缓慢而正式，情绪中带着尊重和真诚，声调平稳而高，能量饱满。</td>
+              <td class="audio-cell"><audio controls><source src="samples/instruction_following/ours_3.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/instruction_following/cv2_3.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/instruction_following/cv3_3.wav" type="audio/wav" /></audio></td>
+            </tr>
+            <tr>
+              <td>我和我朋友刚从巴厘岛回来。</td>
+              <td class="audio-cell"><audio controls><source src="samples/instruction_following/ref_4.wav" type="audio/wav" /></audio></td>
+              <td>With a calm, steady tone, a young adult male speaks clearly and confidently in a neutral pitch, projecting a composed demeanor.</td>
+              <td class="audio-cell"><audio controls><source src="samples/instruction_following/ours_4.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/instruction_following/cv2_4.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/instruction_following/cv3_4.wav" type="audio/wav" /></audio></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card" id="cross-lingual-cases">
+      <h2>Cross-Lingual Instruction Cases</h2>
+      <p class="section-note">
+        These cases highlight bilingual instruction control, including English text with Chinese instructions and Chinese text with English instructions.
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Target Text</th>
+              <th>Reference Utterance (Target Speaker)</th>
+              <th>Instruction</th>
+              <th>SI-Voice (Ours)</th>
+              <th>CosyVoice2</th>
+              <th>CosyVoice3</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>I'll send for Tom to my boudoir.</td>
+              <td class="audio-cell"><audio controls><source src="samples/crosslingual/ref_1.wav" type="audio/wav" /></audio></td>
+              <td>她轻声细语，但音调依然高亢。</td>
+              <td class="audio-cell"><audio controls><source src="samples/crosslingual/ours_1.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/crosslingual/cv2_1.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/crosslingual/cv3_1.wav" type="audio/wav" /></audio></td>
+            </tr>
+            <tr>
+              <td>我昨天遇到马克，他看起来很忧郁。</td>
+              <td class="audio-cell"><audio controls><source src="samples/crosslingual/ref_2.wav" type="audio/wav" /></audio></td>
+              <td>calm, neutral, stable pitch, medium-energy</td>
+              <td class="audio-cell"><audio controls><source src="samples/crosslingual/ours_2.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/crosslingual/cv2_2.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/crosslingual/cv3_2.wav" type="audio/wav" /></audio></td>
+            </tr>
+            <tr>
+              <td>She had said, so that one could keep up a conversation!</td>
+              <td class="audio-cell"><audio controls><source src="samples/crosslingual/ref_3.wav" type="audio/wav" /></audio></td>
+              <td>怒气冲冲的男人用平稳的语调向众人讲话，语速适人，展现出较低的能量水平。</td>
+              <td class="audio-cell"><audio controls><source src="samples/crosslingual/ours_3.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/crosslingual/cv2_3.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/crosslingual/cv3_3.wav" type="audio/wav" /></audio></td>
+            </tr>
+            <tr>
+              <td>哪天我也许得和他谈谈。</td>
+              <td class="audio-cell"><audio controls><source src="samples/crosslingual/ref_4.wav" type="audio/wav" /></audio></td>
+              <td>With a calm, mid-range pitch and unhurried energy, her voice floats forward like a gentle breeze, reflecting thoughtful consideration and a polite, reserved demeanor.</td>
+              <td class="audio-cell"><audio controls><source src="samples/crosslingual/ours_4.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/crosslingual/cv2_4.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/crosslingual/cv3_4.wav" type="audio/wav" /></audio></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card" id="robustness">
+      <h2>Robustness to Instruction Style</h2>
+      <p class="section-note">
+        For the same content and the same reference speaker, we compare outputs under six different instruction formulations to highlight robustness to wording variations. Each output cell includes the corresponding instruction used for synthesis.
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Target Text</th>
+              <th>Reference Utterance (Target Speaker)</th>
+              <th>Natural-EN</th>
+              <th>Natural-ZH</th>
+              <th>Expressive-EN</th>
+              <th>Expressive-ZH</th>
+              <th>Label-EN</th>
+              <th>Label-ZH</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>All my gum tips gone as well. </td>
+              <td class="audio-cell"><audio controls><source src="samples/robustness/ref_1.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell">
+                <div class="cell-stack">
+                  <audio controls><source src="samples/robustness/nat_en_1.wav" type="audio/wav" /></audio>
+                  <details class="mini-details"><summary>Instruction</summary><p>Her voice's pitch is high, yet her unhappy speaking speed is regular.</p></details>
+                </div>
+              </td>
+              <td class="audio-cell">
+                <div class="cell-stack">
+                  <audio controls><source src="samples/robustness/nat_zh_1.wav" type="audio/wav" /></audio>
+                  <details class="mini-details"><summary>Instruction</summary><p>她的声音虽然高亢，但情绪低落，语速平稳。</p></details>
+                </div>
+              </td>
+              <td class="audio-cell">
+                <div class="cell-stack">
+                  <audio controls><source src="samples/robustness/exp_en_1.wav" type="audio/wav" /></audio>
+                  <details class="mini-details"><summary>Instruction</summary><p>Her voice soars with a high pitch, yet her tone conveys deep unhappiness at a steady pace.</p></details>
+                </div>
+              </td>
+              <td class="audio-cell">
+                <div class="cell-stack">
+                  <audio controls><source src="samples/robustness/exp_zh_1.wav" type="audio/wav" /></audio>
+                  <details class="mini-details"><summary>Instruction</summary><p>她的声音尖锐而高亢，然而语气却透着深深的不悦，语速均匀。</p></details>
+                </div>
+              </td>
+              <td class="audio-cell">
+                <div class="cell-stack">
+                  <audio controls><source src="samples/robustness/lab_en_1.wav" type="audio/wav" /></audio>
+                  <details class="mini-details"><summary>Instruction</summary><p>fast-unhappy, high-pitch, unstable, medium-energy</p></details>
+                </div>
+              </td>
+              <td class="audio-cell">
+                <div class="cell-stack">
+                  <audio controls><source src="samples/robustness/lab_zh_1.wav" type="audio/wav" /></audio>
+                  <details class="mini-details"><summary>Instruction</summary><p>快而不高兴、高音、不稳定、中能量</p></details>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>为了不让鱼吃掉诗人的身体。</td>
+              <td class="audio-cell"><audio controls><source src="samples/robustness/ref_2.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell">
+                <div class="cell-stack">
+                  <audio controls><source src="samples/robustness/nat_en_2.wav" type="audio/wav" /></audio>
+                  <details class="mini-details"><summary>Instruction</summary><p>The voice is slow and calm, with a neutral, mid-pitched tone and steady energy, delivering a factual and unemotional narration.</p></details>
+                </div>
+              </td>
+              <td class="audio-cell">
+                <div class="cell-stack">
+                  <audio controls><source src="samples/robustness/nat_zh_2.wav" type="audio/wav" /></audio>
+                  <details class="mini-details"><summary>Instruction</summary><p>语速缓慢而平静，声线平稳且中低音，带着稳定的能量，传达一种客观而无情感的叙述。</p></details>
+                </div>
+              </td>
+              <td class="audio-cell">
+                <div class="cell-stack">
+                  <audio controls><source src="samples/robustness/exp_en_2.wav" type="audio/wav" /></audio>
+                  <details class="mini-details"><summary>Instruction</summary><p>A neutral, steady voice narrates with a calm, measured pace and tone, conveying a factual and unemotional delivery, like reciting a historical account.</p></details>
+                </div>
+              </td>
+              <td class="audio-cell">
+                <div class="cell-stack">
+                  <audio controls><source src="samples/robustness/exp_zh_2.wav" type="audio/wav" /></audio>
+                  <details class="mini-details"><summary>Instruction</summary><p>那声音平静而稳定，以缓慢而有节奏的方式讲述，传达一种客观且无情感的历史叙述。</p></details>
+                </div>
+              </td>
+              <td class="audio-cell">
+                <div class="cell-stack">
+                  <audio controls><source src="samples/robustness/lab_en_2.wav" type="audio/wav" /></audio>
+                  <details class="mini-details"><summary>Instruction</summary><p>slow, calm, stable pitch, medium-energy</p></details>
+                </div>
+              </td>
+              <td class="audio-cell">
+                <div class="cell-stack">
+                  <audio controls><source src="samples/robustness/lab_zh_2.wav" type="audio/wav" /></audio>
+                  <details class="mini-details"><summary>Instruction</summary><p>慢、平静、稳定音调、中等能量</p></details>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card" id="challenging-cases">
+      <h2>Challenging Cases</h2>
+      <div class="failure-note">
+        We show representative challenging cases where baseline systems may leak instruction text into the synthesized speech or generate unstable continuations under free-form bilingual instructions. These examples illustrate qualitative differences that are difficult to fully capture with aggregate metrics alone.
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Target Text</th>
+              <th>Reference Utterance (Target Speaker)</th>
+              <th>Instruction</th>
+              <th>SI-Voice (Ours)</th>
+              <th>CosyVoice2</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>妇女节快乐。我永远爱你，妈妈。</td>
+              <td class="audio-cell"><audio controls><source src="samples/failure/ref_1.wav" type="audio/wav" /></audio></td>
+              <td>语音缓慢而充满感情，声线温和稳定，传达出温暖和真挚的信息。</td>
+              <td class="audio-cell"><audio controls><source src="samples/failure/ours_1.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/failure/cv2_1.wav" type="audio/wav" /></audio></td>
+              <td> Hallucinated continuation</td>
+            </tr>
+            <tr>
+              <td>尽管提意见，我会改正的。</td>
+              <td class="audio-cell"><audio controls><source src="samples/failure/ref_2.wav" type="audio/wav" /></audio></td>
+              <td>一个清晰洪亮的声音平静自信地传达着专业而开放的信息，没有情感波动，能量高且专注。</td>
+              <td class="audio-cell"><audio controls><source src="samples/failure/ours_2.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/failure/cv2_2.wav" type="audio/wav" /></audio></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>雪下得真大，带着我去购物。</td>
+              <td class="audio-cell"><audio controls><source src="samples/failure/ref_3.wav" type="audio/wav" /></audio></td>
+              <td>充满活力的声音迅速而兴奋地用普通话表达出来，充满了期待和喜悦。</td>
+              <td class="audio-cell"><audio controls><source src="samples/failure/ours_3.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/failure/cv2_3.wav" type="audio/wav" /></audio></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card" id="zero-shot">
+      <h2>Zero-Shot Synthesis</h2>
+      <p class="section-note">
+        We show representative zero-shot synthesis cases in English and Chinese using prompt speech as the speaker reference.
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Target Text</th>
+              <th>Prompt Speech</th>
+              <th>SI-Voice (Ours)</th>
+              <th>ZipVoice</th>
+              <th>CosyVoice2</th>
+              <th>CosyVoice3</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Fill in target text.</td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/prompt_1.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/ours_1.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/zipvoice_1.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/cv2_1.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/cv3_1.wav" type="audio/wav" /></audio></td>
+            </tr>
+            <tr>
+              <td>Fill in target text.</td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/prompt_2.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/ours_2.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/zipvoice_2.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/cv2_2.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/cv3_2.wav" type="audio/wav" /></audio></td>
+            </tr>
+            <tr>
+              <td>这里填写目标文本。</td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/prompt_3.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/ours_3.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/zipvoice_3.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/cv2_3.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/cv3_3.wav" type="audio/wav" /></audio></td>
+            </tr>
+            <tr>
+              <td>这里填写目标文本。</td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/prompt_4.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/ours_4.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/zipvoice_4.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/cv2_4.wav" type="audio/wav" /></audio></td>
+              <td class="audio-cell"><audio controls><source src="samples/zeroshot/cv3_4.wav" type="audio/wav" /></audio></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const dropdownItems = document.querySelectorAll('.nav-item.has-dropdown');
+
+      dropdownItems.forEach(function (item) {
+        const button = item.querySelector('.nav-button');
+        const links = item.querySelectorAll('.nav-dropdown a');
+
+        button.addEventListener('click', function (event) {
+          event.stopPropagation();
+          dropdownItems.forEach(function (otherItem) {
+            if (otherItem !== item) {
+              otherItem.classList.remove('open');
+            }
+          });
+          item.classList.toggle('open');
+        });
+
+        links.forEach(function (link) {
+          link.addEventListener('click', function () {
+            item.classList.remove('open');
+          });
+        });
+      });
+
+      document.addEventListener('click', function () {
+        dropdownItems.forEach(function (item) {
+          item.classList.remove('open');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
