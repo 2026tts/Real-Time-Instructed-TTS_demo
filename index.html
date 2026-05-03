@@ -406,9 +406,10 @@
 
     .update-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: 1fr;
       gap: 18px;
-      margin-top: 22px;
+      margin: 22px auto 0;
+      max-width: 980px;
       align-items: stretch;
     }
 
@@ -1077,7 +1078,7 @@
           <p>
             We provide the MOS listening-test materials used in our subjective evaluation, including the rating criteria and evaluation questions for speech quality, speaker similarity, and instruction-following score.
           </p>
-          <a class="material-button" href="Listening test_IS26.pdf" target="_blank" rel="noopener noreferrer">View MOS Evaluation Protocol</a>
+          <a class="material-button" href="docs/mos_evaluation_protocol.pdf" target="_blank" rel="noopener noreferrer">View MOS Evaluation Protocol</a>
         </div>
 
         <div class="update-card" id="text-encoder-comparison">
@@ -1086,7 +1087,7 @@
             We evaluate multiple multilingual text encoders using a nearest-class style classification test on TextrolSpeech prompts. Samples are classified by cosine similarity to label-phrase embeddings for emotion, pitch, energy, and tempo.
           </p>
           <p>
-            E5 achieves competitive or top-performing results across emotion, pitch, energy, and tempo, showing stable performance across different style attributes. This motivates its use as the instruction encoder in SI-Voice.
+            E5 achieves consistently competitive performance across emotion, pitch, energy, and tempo, motivating its use as the instruction encoder in SI-Voice.
           </p>
           <div class="table-wrap">
             <table>
