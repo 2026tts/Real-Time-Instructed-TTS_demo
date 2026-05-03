@@ -402,10 +402,77 @@
       margin-top: 28px;
     }
 
+
+
+    .update-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 22px;
+      align-items: stretch;
+    }
+
+    .update-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px;
+      background: #fcfdff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .update-card h3 {
+      margin-top: 0;
+      color: var(--accent);
+    }
+
+    .update-card .table-wrap {
+      margin-top: 12px;
+      margin-bottom: 10px;
+    }
+
+    .update-card table {
+      min-width: 620px;
+    }
+
+    .update-card th,
+    .update-card td {
+      font-size: 0.9rem;
+      padding: 9px 8px;
+    }
+
+    .material-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      align-self: flex-start;
+      margin-top: auto;
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .material-button:hover {
+      color: white;
+      background: #245bc0;
+      text-decoration: none;
+    }
+
+    .placeholder {
+      color: var(--muted);
+      font-style: italic;
+    }
+
     @media (max-width: 980px) {
       .dataset-layout,
       .sample-grid,
-      .highlights {
+      .highlights,
+      .update-grid {
         grid-template-columns: 1fr;
       }
 
@@ -458,6 +525,14 @@
           </div>
           <div class="nav-item">
             <a class="nav-button" href="#zero-shot"><span class="nav-button-label">Zero-Shot</span><span class="nav-button-sub">Synthesis</span></a>
+          </div>
+          <div class="nav-item has-dropdown">
+            <button class="nav-button" type="button"><span class="nav-button-label">Additional</span><span class="nav-button-sub">Evaluation</span><span class="nav-caret">▾</span></button>
+            <div class="nav-dropdown">
+              <a href="#prosody-analysis">Prosody Analysis</a>
+              <a href="#mos-protocol">MOS Protocol</a>
+              <a href="#text-encoder-comparison">Text Encoder Comparison</a>
+            </div>
           </div>
         </div>
       </div>
@@ -547,7 +622,7 @@
         <div class="sample-card">
           <h3>Chinese Example</h3>
           <div class="sample-meta">Sample ID: esd_0001_000965</div>
-          <p><strong>Text:</strong> 这里填写中文目标文本。</p>
+          <p><strong>Text:</strong> 我必须再次感谢您的慷慨相助。</p>
           <audio controls>
             <source src="samples/dataset/zh_example_001.wav" type="audio/wav" />
           </audio>
@@ -577,7 +652,7 @@
         <div class="sample-card">
           <h3>English Example</h3>
           <div class="sample-meta">Sample ID: esd_0018_000795</div>
-          <p><strong>Text:</strong> Fill in the English target text here.</p>
+          <p><strong>Text:</strong> Aha what i have we here? </p>
           <audio controls>
             <source src="samples/dataset/en_example_001.wav" type="audio/wav" />
           </audio>
@@ -921,6 +996,134 @@
       </div>
     </section>
 
+
+
+    <section class="card" id="additional-evaluation">
+      <h2>Additional Evaluation Materials</h2>
+      <p class="section-note justified-note">
+        We provide additional materials to support a more transparent evaluation of SI-Voice, including prosody-oriented objective analysis, MOS evaluation protocol, and text encoder comparison.
+      </p>
+
+      <div class="update-grid">
+        <div class="update-card" id="prosody-analysis">
+          <h3>Prosody-Oriented Objective Analysis</h3>
+          <p>
+            We provide an English-only prosody-oriented analysis because reliable pitch and speaking-rate labels are available for English but not for Chinese. The analysis reports Mean F0 for pitch-oriented instructions and speaking rate for rate-oriented instructions. SI-Voice shows clear pitch variation from low to high pitch instructions and follows the expected speaking-rate trend from slow to fast instructions.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th rowspan="2">Model</th>
+                  <th colspan="3">Pitch: Mean F0 (Hz)</th>
+                  <th colspan="3">Speaking Rate (words/sec)</th>
+                </tr>
+                <tr>
+                  <th>Low</th>
+                  <th>Normal</th>
+                  <th>High</th>
+                  <th>Slow</th>
+                  <th>Normal</th>
+                  <th>Fast</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>CosyVoice2</td>
+                  <td>117.69</td>
+                  <td>145.90</td>
+                  <td>239.07</td>
+                  <td>3.10</td>
+                  <td>3.95</td>
+                  <td>4.72</td>
+                </tr>
+                <tr>
+                  <td>CosyVoice3</td>
+                  <td>120.30</td>
+                  <td>127.03</td>
+                  <td>218.05</td>
+                  <td>1.82</td>
+                  <td>2.04</td>
+                  <td>2.18</td>
+                </tr>
+                <tr>
+                  <td>PromptTTS</td>
+                  <td>155.52</td>
+                  <td>162.09</td>
+                  <td>186.34</td>
+                  <td>5.40</td>
+                  <td>6.03</td>
+                  <td>6.85</td>
+                </tr>
+                <tr>
+                  <td>SI-Voice (Ours)</td>
+                  <td>133.86</td>
+                  <td>151.65</td>
+                  <td>223.32</td>
+                  <td>3.63</td>
+                  <td>3.74</td>
+                  <td>3.80</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="caption">
+            Note: This analysis is conducted on English samples only because reliable Chinese prosody labels are unavailable. Pitch is reported as Mean F0 in Hz, and speaking rate is reported in words/sec.
+          </p>
+        </div>
+
+        <div class="update-card" id="mos-protocol">
+          <h3>MOS Evaluation Protocol</h3>
+          <p>
+            We provide the MOS listening-test materials used in our subjective evaluation, including the rating criteria and evaluation questions for speech quality, speaker similarity, and instruction-following score.
+          </p>
+          <a class="material-button" href="Listening test_IS26.pdf" target="_blank" rel="noopener noreferrer">View MOS Evaluation Protocol</a>
+        </div>
+
+        <div class="update-card" id="text-encoder-comparison">
+          <h3>Text Encoder Comparison</h3>
+          <p>
+            We evaluate multiple multilingual text encoders using a nearest-class style classification test on TextrolSpeech prompts. Samples are classified by cosine similarity to label-phrase embeddings for emotion, pitch, energy, and tempo.
+          </p>
+          <p>
+            E5 achieves competitive or top-performing results across emotion, pitch, energy, and tempo, showing stable performance across different style attributes. This motivates its use as the instruction encoder in SI-Voice.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Attribute</th>
+                  <th>E5 Acc.</th>
+                  <th>Top / Comparable Encoders</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Emotion</td>
+                  <td>55.10%</td>
+                  <td>MPNet: 55.58%, LaBSE: 39.08%</td>
+                </tr>
+                <tr>
+                  <td>Pitch</td>
+                  <td>62.67%</td>
+                  <td>DistilUSE: 61.93%, LaBSE: 57.33%</td>
+                </tr>
+                <tr>
+                  <td>Energy</td>
+                  <td>58.07%</td>
+                  <td>MPNet: 58.13%, DistilUSE: 57.00%</td>
+                </tr>
+                <tr>
+                  <td>Tempo</td>
+                  <td>50.00%</td>
+                  <td>LaBSE: 50.73%, MPNet: 49.73%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
     
   </div>
   <script>
